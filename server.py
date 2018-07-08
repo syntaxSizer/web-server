@@ -1,28 +1,33 @@
 import socket
 import typing
 
-HOST = '127.0.0.1'
+HOST = "127.0.0.1"
 PORT = 3000
 RESPONSES = {
-        'SUCCESS': b"""
+        "SUCCESS": b"""
             HTTP/1.1 200 OK
             Content-type: text/html; charset=utf-8
             Content-length: 15
 
             <h1>Hello!</h1>""".replace(b"\n", b"\r\n"),
-        'BAD_REQUEST': b"""\
+        "BAD_REQUEST": b"""\
             HTTP/1.1 400 Bad Request
             Content-type: text/plain; charset=utf-8
             Content-length: 11
 
             Bad Request""".replace(b"\n", b"\r\n"),
-            'NOT_FOUND': b"""\
+            "NOT_FOUND": b"""\
                     HTTP/1.1 404 Not Found
                     Content-type: text/plain
                     Content-length: 9
 
-                    Not Found""".replace(b"\n", b"\r\n")
+                    Not Found""".replace(b"\n", b"\r\n"),
+            "METHOD_NOT_ALLOWED": b"""\
+                    HTTP/1.1 405 Method Not Allowed
+                    Content-type: text/plain
+                    Content-length: 17
 
+                    Method Not Allowed""".replace(b"\n", b"\r\n")
         }
 
 def read_lines(sock: socket.socket, bufsize: int = 16_384) ->\
