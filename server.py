@@ -12,10 +12,17 @@ RESPONSES = {
             <h1>Hello!</h1>""".replace(b"\n", b"\r\n"),
         'BAD_REQUEST': b"""\
             HTTP/1.1 400 Bad Request
-            Content-type: text/plain
+            Content-type: text/plain; charset=utf-8
             Content-length: 11
 
-            Bad Request""".replace(b"\n", b"\r\n")
+            Bad Request""".replace(b"\n", b"\r\n"),
+            'NOT_FOUND': b"""\
+                    HTTP/1.1 404 Not Found
+                    Content-type: text/plain
+                    Content-length: 9
+
+                    Not Found""".replace(b"\n", b"\r\n")
+
         }
 
 def read_lines(sock: socket.socket, bufsize: int = 16_384) ->\
@@ -35,9 +42,10 @@ def read_lines(sock: socket.socket, bufsize: int = 16_384) ->\
         while True:
             try:
                 i = buff.index(b"\r\n")
-                line, buff = buff[:i], buff[i+2:]
+                line, buff = buff[:i], buff[i + 2:]
                 if not line:
                     return buff
+
                 yield line
             except IndexError:
                 break
