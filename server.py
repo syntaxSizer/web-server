@@ -3,13 +3,20 @@ import typing
 
 HOST = '127.0.0.1'
 PORT = 3000
+RESPONSES = {
+        'SUCCESS': b"""
+            HTTP/1.1 200 OK
+            Content-type: text/html; charset=utf-8
+            Content-length: 15
 
-RESPONSE = b"""
-        HTTP/1.1 200 OK
-        Content-type: text/html; charset=utf-8
-        Content-length: 15
+            <h1>Hello!</h1>""".replace(b"\n", b"\r\n"),
+        'BAD_REQUEST': b"""\
+            HTTP/1.1 400 Bad Request
+            Content-type: text/plain
+            Content-length: 11
 
-        <h1>Hello!</h1>""".replace(b"\n", b"\r\n")
+            Bad Request""".replace(b"\n", b"\r\n")
+        }
 
 def read_lines(sock: socket.socket, bufsize: int = 16_384) ->\
         typing.Generator[bytes, None, bytes]:
@@ -76,6 +83,11 @@ with socket.socket() as ssock:
     while True:
         client_sock, client_addr = ssock.accept()
         with client_sock:
-            request = Request.parse(sock=client_sock)
-            client_sock.sendall(RESPONSE)
+            try:
+                request = Request.parse(client_sock)
+                client_sock.sendall(RESPONSES['SUCCESS'])
+                print(f"{request}")
+            except Exception as e:
+                print(f"Failed to parse request: {e}")
+                client_sock.sendall(RESPONSES['BAD_REQUEST'])
             print(f"New connection from {client_addr}.")
